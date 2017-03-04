@@ -3,7 +3,6 @@ package main.java;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Random;
 
 public class Trip {
     private Cab cab;
@@ -57,6 +56,6 @@ public class Trip {
     }
 
     public double getEstimatedDuration() {
-        return new Random(60).nextDouble();
+        return locationService.getEstimatedTime(pickupLocation,dropLocation);
     }
 }

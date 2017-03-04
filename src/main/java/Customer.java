@@ -22,11 +22,11 @@ public class Customer {
 
         double totalFare=0;
         for (Trip item : rides) {
-            report.append("Trip from "+item.getPickupLocation()+" to "+item.getDropLocation());
+            report.append("\nTrip from "+item.getPickupLocation()+" to "+item.getDropLocation());
             report.append("\n");
-            report.append("Trip distance is "+item.getDistance()+"km");
+            report.append("Trip distance is "+item.getDistance()+" Km");
             report.append("\n");
-            report.append("Trip duration is "+item.getDuration()+"minutes");
+            report.append("Trip duration is "+item.getDuration()+" Minutes");
             report.append("\n");
 
             double fare = 0;
@@ -55,7 +55,7 @@ public class Customer {
             report.append("Fare for this trip is "+df.format(fare));
             report.append("\n");
         }
-        report.append("Your total cab expenses are "+df.format(totalFare));
+        report.append("\nYour total cab expenses are "+df.format(totalFare));
         return report.toString();
     }
 
