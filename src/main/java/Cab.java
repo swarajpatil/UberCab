@@ -4,62 +4,56 @@ public class Cab {
      public static final int uberGo = 1;
      public static final int uberX = 2;
      public static final int uberSUV = 3;
-    private int cabType;
+    private int cabTypeCode;
+    private CabType cabType;
 
-    public Cab(int cabType)
+    public Cab(int cabTypeCode)
      {
-         this.cabType = cabType;
+         this.cabTypeCode = cabTypeCode;
+         cabType =  createCabType(cabTypeCode);
      }
 
-    public int getCabType() {
-        return cabType;
+    public double calculateFare(double distance, double duration) {
+        double fare = cabType.calculateFare(distance,duration);
+        fare += taxonFare(fare);
+        return fare;
     }
 
-    public double getMinimumFare() {
-        double minimumFare = 0;
-        switch (cabType) {
-            case Cab.uberGo: {
-                minimumFare = 40 ;
-            }
-            case Cab.uberX: {
-                minimumFare = 45 ;
-            }
-            case Cab.uberSUV: {
-                minimumFare = 80;
-            }
-        }
-        return minimumFare;
+    private double taxonFare(double fare) {
+        return serviceTax(fare) + cleanIndiaTax(fare) + krishiTax(fare);
     }
 
-    public double getDurationCharge() {
-        double durationCharge = 0;
-        switch (cabType) {
-            case Cab.uberGo: {
-                durationCharge = 1;
+    public CabType createCabType(int cabType)
+    {
+        switch(cabType)
+        {
+            case uberGo:{
+              return new UberGoCab();
             }
-            case Cab.uberX: {
-                durationCharge = 1.5;
+            case uberX:{
+                return  new UberXCab();
             }
-            case Cab.uberSUV: {
-                durationCharge =  2;
+            case uberSUV:{
+                return  new UberSUVCab();
             }
         }
-        return durationCharge;
+        return null;
     }
 
-    public double getDistanceCharge() {
-        double distanceCharge = 0;
-        switch (cabType) {
-            case Cab.uberGo: {
-                distanceCharge = 6 ;
-            }
-            case Cab.uberX: {
-                distanceCharge = 9;
-            }
-            case Cab.uberSUV: {
-                distanceCharge = 14;
-            }
-        }
-        return distanceCharge;
+    private double krishiTax(double fare) {
+        return fare * 0.15/100;
+    }
+
+    private double cleanIndiaTax(double fare) {
+        return fare * 0.15/100;
+    }
+
+    private double serviceTax(double fare) {
+        return fare * 4.2/100;
+    }
+
+    public double calculateFareEstimate(double distance, double duration)
+    {
+        return cabType.calculateFare(distance,duration);
     }
 }

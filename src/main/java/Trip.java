@@ -13,9 +13,11 @@ public class Trip {
     private LocalDateTime endTime;
     private LocationService locationService = new LocationService();
 
-    public  Trip(Cab cab)
+    public  Trip(Cab cab, String pickupLocation, String dropLocation)
     {
         this.cab = cab;
+        this.pickupLocation = pickupLocation;
+        this.dropLocation = dropLocation;
     }
 
     public String getPickupLocation() {
@@ -46,16 +48,21 @@ public class Trip {
         return Duration.between(startTime,endTime).toMinutes();
     }
 
+    public double getEstimatedDuration()
+    {
+        return locationService.getEstimatedTime(pickupLocation,dropLocation);
+    }
+
     public double getDistance()
     {
         return locationService.getDistanceBetweenLocation(pickupLocation,dropLocation);
     }
 
-    public Cab getCab() {
-        return cab;
+    double calculatatefare(double distance, double duration) {
+        return cab.calculateFare(distance, duration );
     }
 
-    public double getEstimatedDuration() {
-        return locationService.getEstimatedTime(pickupLocation,dropLocation);
+    public double calculatatefareEstimate() {
+        return cab.calculateFare(getDistance(), getEstimatedDuration() );
     }
 }

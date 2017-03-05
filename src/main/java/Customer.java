@@ -3,11 +3,10 @@ package main.java;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-
 public class Customer {
     private String name;
-    private ArrayList<Trip> rides = new ArrayList();
-    private static DecimalFormat df = new DecimalFormat(".##");
+    private ArrayList<Trip> trips = new ArrayList();
+    private static DecimalFormat decimalFormat = new DecimalFormat(".##");
 
     public Customer(String name)
     {
@@ -17,71 +16,50 @@ public class Customer {
     public String printReport()
     {
         StringBuilder report = new StringBuilder();
-        report.append("Customer Name: "+ name);
-        report.append("\n");
-
-        double totalFare=0;
-        for (Trip item : rides) {
-            report.append("\nTrip from "+item.getPickupLocation()+" to "+item.getDropLocation());
-            report.append("\n");
-            report.append("Trip distance is "+item.getDistance()+" Km");
-            report.append("\n");
-            report.append("Trip duration is "+item.getDuration()+" Minutes");
-            report.append("\n");
-
-            double fare = 0;
-            switch(item.getCab().getCabType())
-            {
-                case Cab.uberGo:{
-                    fare = item.getCab().getMinimumFare() + item.getCab().getDurationCharge() * item.getDuration() + item.getCab().getDistanceCharge() * item.getDistance();
-                }
-                case Cab.uberX:{
-                    fare = item.getCab().getMinimumFare() + item.getCab().getDurationCharge() * item.getDuration() + item.getCab().getDistanceCharge() * item.getDistance();
-                }
-                case Cab.uberSUV:{
-                    fare = item.getCab().getMinimumFare() + item.getCab().getDurationCharge() * item.getDuration() + item.getCab().getDistanceCharge() * item.getDistance();
-                }
-            }
-            // add service tax
-            fare += fare * 4.2/100;
-
-            // add swachh bharat tax
-            fare += fare * 0.15/100;
-
-            // add krushi kalyan tax
-            fare += fare * 0.15/100;
-
-            totalFare += fare;
-            report.append("Fare for this trip is "+df.format(fare));
-            report.append("\n");
-        }
-        report.append("\nYour total cab expenses are "+df.format(totalFare));
+        report.append(header());
+        report.append(tripDetails());
+        report.append(footer());
         return report.toString();
     }
 
-    public double calculateFareEstimate(Trip trip)
-    {
-        double fare = 0;
-        switch(trip.getCab().getCabType())
-        {
-            case Cab.uberGo:{
-                fare = trip.getCab().getMinimumFare() + trip.getCab().getDurationCharge() * trip.getEstimatedDuration()
-                        + trip.getCab().getDistanceCharge() * trip.getDistance();
-            }
-            case Cab.uberX:{
-                fare = trip.getCab().getMinimumFare() + trip.getCab().getDurationCharge() * trip.getEstimatedDuration()
-                        + trip.getCab().getDistanceCharge() * trip.getDistance();
-            }
-            case Cab.uberSUV:{
-                fare = trip.getCab().getMinimumFare() + trip.getCab().getDurationCharge() * trip.getEstimatedDuration()
-                        + trip.getCab().getDistanceCharge() * trip.getDistance();
-            }
-        }
-        return fare;
+    private String footer() {
+        return "\nYour total cab expenses are "+ decimalFormat.format(calculateTotal());
     }
 
-    public void completeRide(Trip trip)
+    private String header() {
+        StringBuilder header = new StringBuilder();
+        header.append("Customer Name: "+ name);
+        header.append("\n");
+        return header.toString();
+    }
+
+    private String tripDetails() {
+        StringBuilder tripDetails = new StringBuilder();
+        for (Trip trip : trips) {
+            tripDetails.append("\nTrip from "+trip.getPickupLocation()+" to "+trip.getDropLocation());
+            tripDetails.append("\n");
+            tripDetails.append("Trip distance is "+trip.getDistance()+" Km");
+            tripDetails.append("\n");
+            tripDetails.append("Trip duration is "+trip.getDuration()+" Minutes");
+            tripDetails.append("\n");
+
+            tripDetails.append("Fare for this trip is "+ decimalFormat.format(trip.calculatatefare(trip.getDistance(), trip.getDuration())));
+            tripDetails.append("\n");
+        }
+        return tripDetails.toString();
+    }
+
+    private double calculateTotal()
     {
-        rides.add(trip);
+        double total = 0;
+        for (Trip trip : trips) {
+            total += trip.calculatatefare(trip.getDistance(),trip.getDuration());
+        }
+        return total;
+    }
+
+    public void completeTrip(Trip trip)
+    {
+        trips.add(trip);
     }
 }
